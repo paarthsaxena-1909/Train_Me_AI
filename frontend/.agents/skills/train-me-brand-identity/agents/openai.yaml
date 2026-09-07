@@ -1,0 +1,4 @@
+interface:
+  display_name: "Train Me AI Brand Identity"
+  short_description: "Apply the Train Me AI color system and visual identity"
+  default_prompt: "Use the Train Me AI brand identity skill to guide this frontend UI work."
