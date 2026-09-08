@@ -18,6 +18,9 @@ layer's rules into context.
 - Preserve strong typing and run the relevant backend tests before handoff.
 - Keep `prototype/` experimental; production backend code does not belong there.
 - Add or update a Mermaid sequence diagram under `backend/app/docs` for each non-trivial flow.
+- Domain services must not call another domain service directly. Route
+  cross-domain workflows through typed ports and `app/orchestration`'s
+  `ServiceMediator`; this is an application boundary, not HTTP middleware.
 
 ## Reference routing
 
@@ -29,6 +32,8 @@ Load only the references relevant to the requested change:
 - PostgreSQL query files and parameters: [queries.md](references/queries.md)
 - Repository execution and persistence boundaries: [repositories.md](references/repositories.md)
 - Business logic and orchestration: [services.md](references/services.md)
+- Cross-domain ports and mediator: [orchestration.md](references/orchestration.md)
+- Application logging and sensitive-data boundaries: [logging.md](references/logging.md)
 
 For a feature spanning multiple layers, load only the references for those
 layers and preserve the flow: controller → service → repository → SQL file.

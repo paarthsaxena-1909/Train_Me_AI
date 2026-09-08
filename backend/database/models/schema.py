@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database.models.base import Base
@@ -17,18 +17,25 @@ class AuditFields:
 
 class Agent(AuditFields, Base):
     __tablename__ = "agents"
+    __table_args__ = (
+        CheckConstraint(
+            "pincode IS NULL OR pincode ~ '^[0-9]{6}$'",
+            name="ck_agents_pincode_six_digits",
+        ),
+    )
 
     email: Mapped[str] = mapped_column(String(320), unique=True, nullable=False, index=True)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     region: Mapped[str] = mapped_column(String(100), nullable=False)
+    pincode: Mapped[str | None] = mapped_column(String(6), nullable=True)
 
 
 class Admin(AuditFields, Base):
     __tablename__ = "admins"
 
     email: Mapped[str] = mapped_column(String(320), unique=True, nullable=False, index=True)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
 
