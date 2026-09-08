@@ -1,0 +1,2 @@
+1. Need to Build the AI Layer for Q/A in backend - ideally with polling mechanism for learning purposes and also building it properly
+2. Face Analysis - Depends on the Blob Storage I will be getting and hence lets wait and confirm first what can be used in there 
