@@ -16,7 +16,7 @@ sequenceDiagram
  S-->>C: response (IMPLEMENTED)
 ```
 
-Today, `D` is an in-process adapter such as `RepositoryProductContext`.
+Today, `D` is an in-process adapter such as `ProductContextAdapter`.
 During a microservice migration, `D` can be replaced by an HTTP, RPC, or
 message adapter while the mediator route and consuming service contract remain
 unchanged. Network concerns belong in that adapter, including service

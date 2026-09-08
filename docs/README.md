@@ -9,5 +9,6 @@ Service documentation is organized by ownership. Each service README describes i
 - [Orchestration](services/orchestration/README.md): [mediated request](services/orchestration/flows/mediated-request.md)
 - [Health](services/health/README.md): [health check](services/health/flows/health-check.md)
 - [Products](services/products/README.md): [create product](services/products/flows/create-product.md), [create variant](services/products/flows/create-variant.md), [list catalogue](services/products/flows/list-catalogue.md)
+- [Q&A](services/qa/README.md): [ask one product question](services/qa/flows/ask-question.md)
 
 AI response generation, avatar delivery, face analysis, and object storage remain deferred and must be marked clearly when documented.

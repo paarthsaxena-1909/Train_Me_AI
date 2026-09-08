@@ -8,5 +8,6 @@ export const navigationByRole: Record<Role, NavItem[]> = {
   agent: [
     { label: 'Overview', to: '/agent', icon: 'grid' },
     { label: 'Products', to: '/agent/products', icon: 'book' },
+    { label: 'Q&A', to: '/agent/qa', icon: 'chat' },
   ],
 }

@@ -2,6 +2,10 @@
 
 `ServiceMediator` dispatches typed ports between domains. Domain services do not import or call one another directly. The in-process adapter can later be replaced by HTTP, RPC, or messaging without changing callers. This is an application boundary, not HTTP middleware.
 
+Port adapters should delegate to an existing flow in the owning service. They
+may translate inputs and outputs, but should not create a second business flow
+or query the owning domain's tables directly.
+
 Flow: [mediated request](flows/mediated-request.md).
 
 ## How it works today
@@ -9,14 +13,14 @@ Flow: [mediated request](flows/mediated-request.md).
 The current application is a modular monolith. A consuming workflow requests a
 stable route from `ServiceMediator`, which invokes a registered in-process
 adapter. For product context, the adapter implements `ProductContextPort` and
-uses `ProductsRepository`; it does not call `ProductsService` directly.
+delegates to `ProductsService.get_context()`.
 
 ```text
 Assignment or Q&A flow
         ↓
 ServiceMediator: product.get_context
         ↓
-RepositoryProductContext
+ProductContextAdapter
         ↓
 ProductsRepository → product SQL → PostgreSQL
 ```

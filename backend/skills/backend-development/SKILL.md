@@ -25,6 +25,12 @@ layer's rules into context.
 - Domain services must not call another domain service directly. Route
   cross-domain workflows through typed ports and `app/orchestration`'s
   `ServiceMediator`; this is an application boundary, not HTTP middleware.
+  When a service needs information it does not own (for example, Q&A checking
+  whether a product exists), ask the owning domain through the mediator/port;
+  do not duplicate that domain's SQL query or read its tables from the caller's
+  repository. The port adapter must delegate to an existing owning-domain
+  service flow; it must not create new business logic or bypass that flow with
+  direct database calls.
 
 ## Reference routing
 

@@ -26,6 +26,19 @@ class ProductsService:
             )
         return products
 
+    async def get_product_context(self, session: AsyncSession, product_id: int) -> dict:
+        """Build product-owned context for cross-domain consumers."""
+        rows = await self.repository.list_products(session)
+        product = next((row for row in rows if row["id"] == product_id), None)
+        if product is None:
+            raise NotFoundError("Product not found")
+        variants = await self.repository.list_variants(session, product_id)
+        return {
+            "product": dict(product),
+            "variants": [dict(variant) for variant in variants],
+            "additional_sources": [],
+        }
+
     async def create(
         self,
         session: AsyncSession,

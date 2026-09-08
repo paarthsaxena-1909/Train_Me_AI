@@ -33,6 +33,21 @@ def test_missing_parent_rejected():
     asyncio.run(run())
 
 
+def test_product_service_builds_context_for_cross_domain_requests():
+    async def run():
+        repo = Repo()
+        session = Session()
+        service = ProductsService(repo)
+        await service.create(session, ProductCreate(name='Phone', variant=VariantCreate(name='Base', specs='128GB')))
+
+        context = await service.get_context(session, 1)
+
+        assert context['product']['id'] == 1
+        assert context['variants'][0]['name'] == 'Base'
+
+    asyncio.run(run())
+
+
 def test_migration_releases_legacy_required_catalogue_links():
     migration = Path("database/versions/0003_simple_product_catalogue.py").read_text()
 

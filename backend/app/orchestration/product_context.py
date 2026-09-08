@@ -1,25 +1,18 @@
-"""Repository-backed product context adapter for future domain workflows."""
+"""Product-domain adapter for future cross-domain workflows."""
 
-from app.errors import NotFoundError
-from app.repositories.products_repository import ProductsRepository
+from app.services.products_service import ProductsService
 
 
-class RepositoryProductContext:
-    """Expose catalogue context without coupling consumers to ProductsService."""
+class ProductContextAdapter:
+    """Expose an existing ProductsService flow through the context port."""
 
-    def __init__(self, session, repository: ProductsRepository | None = None) -> None:
+    def __init__(self, session, service: ProductsService | None = None) -> None:
         self.session = session
-        self.repository = repository or ProductsRepository()
+        self.service = service or ProductsService()
 
     async def get_product_context(self, product_id: int) -> dict:
-        products = await self.repository.list_products(self.session)
-        product = next((row for row in products if row["id"] == product_id), None)
-        if product is None:
-            raise NotFoundError("Product not found")
+        return await self.service.get_product_context(self.session, product_id)
 
-        variants = await self.repository.list_variants(self.session, product_id)
-        return {
-            "product": dict(product),
-            "variants": [dict(variant) for variant in variants],
-            "additional_sources": [],
-        }
+
+# Backwards-compatible alias for callers using the original adapter name.
+RepositoryProductContext = ProductContextAdapter

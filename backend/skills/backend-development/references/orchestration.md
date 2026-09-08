@@ -3,7 +3,11 @@
 `backend/app/orchestration/` is the typed application integration boundary for
 cross-domain workflows. It is an in-process mediator/port layer, not FastAPI
 HTTP middleware. Domain services must not import or call another domain
-service directly.
+service directly, duplicate its persistence logic, or read its tables from
+their own repository. When a service needs information it does not own, it
+asks the owning domain through a mediator-registered port.
+The concrete port adapter delegates to an existing owning-domain service flow;
+it does not add business rules or bypass that flow with direct database calls.
 
 ## Allowed flow
 
