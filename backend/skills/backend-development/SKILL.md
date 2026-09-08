@@ -17,7 +17,11 @@ layer's rules into context.
 - Prefix all controller routes with `/api/v1`; keep endpoint paths resource-relative so the API version can be changed centrally.
 - Preserve strong typing and run the relevant backend tests before handoff.
 - Keep `prototype/` experimental; production backend code does not belong there.
-- Add or update a Mermaid sequence diagram under `backend/app/docs` for each non-trivial flow.
+- Document each service under `docs/services/<service>/README.md` and keep one
+  Mermaid sequence diagram per multi-step flow under
+  `docs/services/<service>/flows/<flow>.md`. When a flow is added or changed,
+  create or update its dedicated file; never accumulate unrelated flows in one
+  sequence document. Mark implemented and deferred/AI-replacement steps.
 - Domain services must not call another domain service directly. Route
   cross-domain workflows through typed ports and `app/orchestration`'s
   `ServiceMediator`; this is an application boundary, not HTTP middleware.

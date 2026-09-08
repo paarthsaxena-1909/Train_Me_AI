@@ -92,17 +92,20 @@ class ProductVariant(AuditFields, Base):
     __tablename__ = "product_variants"
 
     specs: Mapped[str] = mapped_column(Text, nullable=False)
-    product_lineup_id: Mapped[int] = mapped_column(
-        ForeignKey("product_lineups._id", ondelete="CASCADE"), nullable=False, index=True
+    name: Mapped[str] = mapped_column(String(255), nullable=False, default="Default")
+    product_lineup_id: Mapped[int | None] = mapped_column(
+        ForeignKey("product_lineups._id", ondelete="CASCADE"), nullable=True, index=True
     )
 
 
 class Product(AuditFields, Base):
     __tablename__ = "products"
 
-    product_lineup_id: Mapped[int] = mapped_column(
-        ForeignKey("product_lineups._id", ondelete="CASCADE"), nullable=False, index=True
+    name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    product_lineup_id: Mapped[int | None] = mapped_column(
+        ForeignKey("product_lineups._id", ondelete="CASCADE"), nullable=True, index=True
     )
-    product_variant_id: Mapped[int] = mapped_column(
-        ForeignKey("product_variants._id", ondelete="CASCADE"), nullable=False, index=True
+    product_variant_id: Mapped[int | None] = mapped_column(
+        ForeignKey("product_variants._id", ondelete="CASCADE"), nullable=True, index=True
     )

@@ -7,6 +7,7 @@ import type { Role } from '../lib/types'
 import { readAuthToken } from '../features/auth/authApi'
 import { Provider } from 'react-redux'
 import { store } from './store'
+import { ProductsPage } from '../features/products/ProductsPage'
 
 function homeDestination() { return readAuthToken() ? 'agent' : 'agent/login' }
 
@@ -17,7 +18,7 @@ function Placeholder({ title }: { title: string }) {
 function Workspace({ role }: { role: Role }) {
   const { pathname } = useLocation()
   const section = pathname.split('/')[2]
-  const page = section ? <Placeholder title={section === 'playbooks' ? (role === 'agent' ? 'My playbooks' : 'Playbooks') : section[0].toUpperCase() + section.slice(1)} /> : <OverviewPage role={role} />
+  const page = section === 'products' ? <ProductsPage canCreate={role === 'admin'} /> : section ? <Placeholder title={section[0].toUpperCase() + section.slice(1)} /> : <OverviewPage role={role} />
   return <ProtectedRoute role={role}>{page}</ProtectedRoute>
 }
 

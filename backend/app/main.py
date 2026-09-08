@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from app.controllers.auth_controller import router as auth_router
 from app.controllers.health_controller import router as health_router
+from app.controllers.products_controller import router as products_router
 from app.errors import AppError, ConflictError, ForbiddenError, NotFoundError, UnauthorizedError
 from app.logger import AppLogger
 from app.settings import get_settings
@@ -33,6 +34,7 @@ def create_app() -> FastAPI:
         application.add_exception_handler(error_type, app_error_handler)
     application.include_router(health_router)
     application.include_router(auth_router)
+    application.include_router(products_router)
     return application
 
 

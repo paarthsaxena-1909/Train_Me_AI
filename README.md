@@ -46,7 +46,7 @@ file. SQLAlchemy is used to make the database schema explicit and to provide
 Alembic metadata. API contracts use Pydantic models. A database-specific query
 tree keeps a future database switch isolated. See
 `backend/skills/backend-development/SKILL.md` for the operating rules and
-`backend/app/docs/` for flow diagrams.
+[the service documentation index](docs/README.md) for structural notes and per-flow Mermaid diagrams.
 
 The backend reads development-safe defaults from `backend/app/settings.py`.
 Override values such as `JWT_SECRET`, `ACCESS_TOKEN_MINUTES`, `LOG_LEVEL`,

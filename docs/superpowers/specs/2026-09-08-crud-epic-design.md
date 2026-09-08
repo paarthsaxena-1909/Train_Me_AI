@@ -237,9 +237,10 @@ role denial, validation errors, and logout.
 
 ## Documentation
 
-Maintain service documentation under `backend/app/docs/` for authentication,
-orchestration, products, assignments, Q&A, and face attendance. Each multi-step
-flow includes a Mermaid sequence diagram. Diagram participants for mock AI
+Maintain service documentation under `docs/services/<service>/` for authentication,
+orchestration, products, assignments, Q&A, and face attendance. Each distinct
+multi-step flow has its own Mermaid sequence diagram under the service's `flows/`
+directory, and that diagram is updated whenever the flow changes. Diagram participants for mock AI
 adapters are labeled `PENDING AI REPLACEMENT`; implemented components are
 labeled `IMPLEMENTED`. The README documents setup, environment variables,
 volume behavior, test commands, route entry points, and deferred integrations.

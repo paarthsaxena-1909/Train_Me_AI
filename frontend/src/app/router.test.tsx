@@ -44,16 +44,16 @@ describe('application shell routing', () => {
     store.dispatch(setSession({ token: 'admin-token', account: { id: 1, email: 'admin@timesinternet.in', name: 'Admin', role: 'admin' } }))
     renderAt('/admin')
     expect(await screen.findByRole('navigation', { name: /workspace/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /team/i })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /playbooks/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /overview/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /products/i })).toBeInTheDocument()
   })
 
   test('shows the agent navigation without admin-only team controls', async () => {
     store.dispatch(setSession({ token: 'agent-token', account: { id: 2, email: 'agent@timesinternet.in', name: 'Agent', role: 'agent' } }))
     renderAt('/agent')
     expect(await screen.findByRole('navigation', { name: /workspace/i })).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /team/i })).not.toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /my playbooks/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /overview/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /products/i })).toBeInTheDocument()
   })
 
   test('opens and closes the responsive navigation menu', async () => {
@@ -67,13 +67,10 @@ describe('application shell routing', () => {
     expect(screen.getByRole('navigation', { name: /workspace/i })).toHaveAttribute('data-menu-visible', 'false')
   })
 
-  test('renders semantic state classes for overview signal changes and bars', () => {
-    const { container } = render(<OverviewPage role="agent" />)
-    expect(screen.getByText('+18%')).toHaveClass('bg-light-purple')
-    expect(screen.getByText('+18%').className).not.toContain('}')
-    const saturday = screen.getByText('Sat').previousElementSibling
-    expect(saturday).toHaveClass('bg-primary')
-    expect(container.querySelectorAll('.bg-light-purple').length).toBeGreaterThan(1)
+  test('renders a minimal overview without fake metrics', () => {
+    render(<OverviewPage role="agent" />)
+    expect(screen.getByRole('heading', { name: /your agent workspace/i })).toBeInTheDocument()
+    expect(screen.queryByText('+18%')).not.toBeInTheDocument()
   })
 })
 
