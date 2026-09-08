@@ -22,6 +22,13 @@ mediator.register("products.context", product_context_port)
 context = await mediator.request("products.context", request)
 ```
 
+Port result types are Pydantic response models shared by the owning service
+and its adapter. Validate the model in both places: the owning service/context
+flow validates its assembled result, and the adapter applies
+`validate_call(validate_return=True)` before returning across the port. Keep
+the protocol annotation, adapter annotation, and service return type in sync;
+adapters should not pass raw database mappings across the boundary.
+
 ## Forbidden flow
 
 ```python

@@ -1,4 +1,5 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import ConfigDict, validate_call
+from typing import Any
 
 from app.logger import AppLogger
 from app.models.qa import QueryCreate, QueryResponse
@@ -19,7 +20,8 @@ class QAService:
         self.product_context = product_context
         self.logger = AppLogger.get_logger(__name__)
 
-    async def ask(self, session: AsyncSession, payload: QueryCreate) -> QueryResponse:
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+    async def ask(self, session: Any, payload: QueryCreate) -> QueryResponse:
         query = payload.query.strip()
         if self.product_context is None:
             raise RuntimeError("A product context port is required")
@@ -33,4 +35,4 @@ class QAService:
             await session.rollback()
             raise
         self.logger.info("agent query created product_id=%s query_id=%s", payload.product_id, row["id"])
-        return QueryResponse(**row)
+        return QueryResponse.model_validate(row)

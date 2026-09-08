@@ -16,6 +16,16 @@ layer's rules into context.
 - Keep controllers, services, repositories, SQL files, API models, and schema models in their designated layers.
 - Prefix all controller routes with `/api/v1`; keep endpoint paths resource-relative so the API version can be changed centrally.
 - Preserve strong typing and run the relevant backend tests before handoff.
+- Service methods must declare explicit Pydantic response models. Use
+  `pydantic.validate_call` for runtime argument validation and
+  `ResponseModel.model_validate(...)` at the return boundary so repository
+  rows and assembled dictionaries cannot leak unvalidated shapes. Set
+  `validate_return=True` on `validate_call` when the annotated return type
+  should also be checked automatically.
+- Cross-domain context flows must validate the same shared Pydantic response
+  model twice: the owning service/context flow validates before returning, and
+  the orchestration port adapter validates again at the boundary. Keep the
+  port annotation, adapter annotation, and service return model identical.
 - Keep `prototype/` experimental; production backend code does not belong there.
 - Document each service under `docs/services/<service>/README.md` and keep one
   Mermaid sequence diagram per multi-step flow under

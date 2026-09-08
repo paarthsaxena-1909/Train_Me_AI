@@ -1,6 +1,7 @@
 """Protocols used as stable boundaries between domain workflows."""
 
 from typing import Awaitable, Protocol, TypeVar
+from app.models.products import ProductContextResponse
 
 
 PayloadT = TypeVar("PayloadT")
@@ -14,4 +15,4 @@ class DomainPort(Protocol[PayloadT, ResultT]):
 
 class ProductContextPort(Protocol):
     """Read-only product context boundary for future assignments and Q&A."""
-    async def get_product_context(self, product_id: int) -> dict: ...
+    async def get_product_context(self, product_id: int) -> ProductContextResponse: ...

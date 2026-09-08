@@ -1,5 +1,8 @@
 """Product-domain adapter for future cross-domain workflows."""
 
+from pydantic import ConfigDict, validate_call
+
+from app.models.products import ProductContextResponse
 from app.services.products_service import ProductsService
 
 
@@ -10,7 +13,8 @@ class ProductContextAdapter:
         self.session = session
         self.service = service or ProductsService()
 
-    async def get_product_context(self, product_id: int) -> dict:
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+    async def get_product_context(self, product_id: int) -> ProductContextResponse:
         return await self.service.get_product_context(self.session, product_id)
 
 

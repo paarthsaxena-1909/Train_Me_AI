@@ -1,8 +1,15 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import ConfigDict, validate_call
+from typing import Any
 
 from app.errors import NotFoundError
 from app.logger import AppLogger
-from app.models.products import ProductCreate, ProductResponse, VariantCreate, VariantResponse
+from app.models.products import (
+    ProductContextResponse,
+    ProductCreate,
+    ProductResponse,
+    VariantCreate,
+    VariantResponse,
+)
 from app.repositories.products_repository import ProductsRepository
 
 
@@ -11,7 +18,8 @@ class ProductsService:
         self.repository = repository or ProductsRepository()
         self.logger = AppLogger.get_logger(__name__)
 
-    async def list(self, session: AsyncSession) -> list[ProductResponse]:
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+    async def list(self, session: Any) -> list[ProductResponse]:
         rows = await self.repository.list_products(session)
         products = []
         for row in rows:
@@ -24,24 +32,31 @@ class ProductsService:
                     variants=[VariantResponse(**variant) for variant in variants],
                 )
             )
-        return products
+        return [ProductResponse.model_validate(product) for product in products]
 
-    async def get_product_context(self, session: AsyncSession, product_id: int) -> dict:
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+    async def get_context(self, session: Any, product_id: int) -> ProductContextResponse:
         """Build product-owned context for cross-domain consumers."""
         rows = await self.repository.list_products(session)
         product = next((row for row in rows if row["id"] == product_id), None)
         if product is None:
             raise NotFoundError("Product not found")
         variants = await self.repository.list_variants(session, product_id)
-        return {
+        return ProductContextResponse.model_validate({
             "product": dict(product),
             "variants": [dict(variant) for variant in variants],
             "additional_sources": [],
-        }
+        })
 
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+    async def get_product_context(self, session: Any, product_id: int) -> ProductContextResponse:
+        """Compatibility name for the product-context port adapter."""
+        return await self.get_context(session, product_id)
+
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
     async def create(
         self,
-        session: AsyncSession,
+        session: Any,
         payload: ProductCreate,
     ) -> ProductResponse:
         try:
@@ -54,11 +69,12 @@ class ProductsService:
             await session.rollback()
             raise
         self.logger.info("product created product_id=%s", row["id"])
-        return ProductResponse(**row, variants=[VariantResponse(id=row["product_variant_id"], name=payload.variant.name.strip(), specs=payload.variant.specs.strip())])
+        return ProductResponse.model_validate({**row, "variants": [VariantResponse(id=row["product_variant_id"], name=payload.variant.name.strip(), specs=payload.variant.specs.strip())]})
 
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
     async def add_variant(
         self,
-        session: AsyncSession,
+        session: Any,
         product_id: int,
         payload: VariantCreate,
     ) -> VariantResponse:
@@ -71,4 +87,4 @@ class ProductsService:
             await session.rollback()
             raise
         self.logger.info("product variant created product_id=%s variant_id=%s", product_id, row["id"])
-        return VariantResponse(**row)
+        return VariantResponse.model_validate(row)

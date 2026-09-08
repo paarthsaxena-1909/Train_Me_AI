@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from app.errors import NotFoundError
-from app.models.qa import QueryCreate
+from app.models.qa import QueryCreate, QueryResponse
 from app.services.qa_service import QAService
 
 
@@ -44,6 +44,7 @@ def test_ask_persists_one_mock_answer_for_a_product():
         session = Session()
         result = await QAService(repository, ProductContext()).ask(session, QueryCreate(product_id=7, query="What is the battery life?"))
 
+        assert isinstance(result, QueryResponse)
         assert result.id == 1
         assert result.product_id == 7
         assert result.response == "Mock AI response based on the selected product specifications."

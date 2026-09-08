@@ -16,4 +16,20 @@ class ProductResponse(BaseModel):
     id: int
     name: str
     description: str | None
-    variants: list[VariantResponse] = []
+    variants: list[VariantResponse] = Field(default_factory=list)
+
+
+class ProductContextProduct(BaseModel):
+    """Product lineup fields exposed to cross-domain workflows."""
+
+    id: int
+    name: str
+    description: str | None = None
+
+
+class ProductContextResponse(BaseModel):
+    """Stable, extensible context contract owned by the product domain."""
+
+    product: ProductContextProduct
+    variants: list[VariantResponse]
+    additional_sources: list[dict] = Field(default_factory=list)

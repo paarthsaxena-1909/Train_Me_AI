@@ -1,8 +1,11 @@
 import pytest
+from pydantic import ValidationError
 import asyncio
 from pathlib import Path
 from app.models.products import ProductCreate, VariantCreate
+from app.models.products import ProductContextResponse, ProductResponse, VariantResponse
 from app.services.products_service import ProductsService
+from app.orchestration.product_context import ProductContextAdapter
 from app.errors import NotFoundError
 
 class Session:
@@ -42,8 +45,33 @@ def test_product_service_builds_context_for_cross_domain_requests():
 
         context = await service.get_context(session, 1)
 
-        assert context['product']['id'] == 1
-        assert context['variants'][0]['name'] == 'Base'
+        assert isinstance(context, ProductContextResponse)
+        assert context.product.id == 1
+        assert context.variants[0].name == 'Base'
+
+
+def test_product_service_returns_typed_models():
+    async def run():
+        repo = Repo()
+        service = ProductsService(repo)
+        product = await service.create(Session(), ProductCreate(name='Phone', variant=VariantCreate(name='Base', specs='128GB')))
+        variant = await service.add_variant(Session(), 1, VariantCreate(name='Pro', specs='256GB'))
+        assert isinstance(product, ProductResponse)
+        assert isinstance(variant, VariantResponse)
+
+    asyncio.run(run())
+
+
+def test_product_context_adapter_rejects_malformed_service_response():
+    class InvalidService:
+        async def get_product_context(self, session, product_id):
+            return {"product": {"id": product_id}, "variants": []}
+
+    async def run():
+        with pytest.raises(ValidationError):
+            await ProductContextAdapter(Session(), InvalidService()).get_product_context(1)
+
+    asyncio.run(run())
 
     asyncio.run(run())
 
