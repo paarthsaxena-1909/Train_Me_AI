@@ -6,7 +6,7 @@ from app.repositories.health_repository import HealthRepository
 from app.services.health_service import HealthService
 
 
-router = APIRouter(tags=["health"])
+router = APIRouter(prefix="/api/v1", tags=["health"])
 
 
 @router.get("/health", response_model=HealthResponse)

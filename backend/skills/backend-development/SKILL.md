@@ -14,6 +14,7 @@ layer's rules into context.
 - Keep production backend application code under `backend/app`.
 - Load API configuration from `backend/app/.env` and migration configuration from `backend/database/.env` with `python-dotenv`.
 - Keep controllers, services, repositories, SQL files, API models, and schema models in their designated layers.
+- Prefix all controller routes with `/api/v1`; keep endpoint paths resource-relative so the API version can be changed centrally.
 - Preserve strong typing and run the relevant backend tests before handoff.
 - Keep `prototype/` experimental; production backend code does not belong there.
 - Add or update a Mermaid sequence diagram under `backend/app/docs` for each non-trivial flow.

@@ -12,7 +12,7 @@ sequenceDiagram
     participant Repo as Health repository
     participant DB as PostgreSQL
 
-    Browser->>API: GET /health
+    Browser->>API: GET /api/v1/health
     API->>Service: check(session)
     Service->>Repo: get_database_time(session)
     Repo->>Repo: load health/database_time.sql
