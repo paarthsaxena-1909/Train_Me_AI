@@ -1,5 +1,4 @@
 import os
-from logging.config import fileConfig
 from pathlib import Path
 
 from alembic import context
@@ -9,14 +8,12 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from database.models.base import Base
-from database.models.user import User  # noqa: F401 - registers model metadata
+import database.models  # noqa: F401 - registers model metadata
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
 config = context.config
 config.set_main_option("sqlalchemy.url", os.environ["DATABASE_URL"])
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
 
