@@ -4,10 +4,12 @@ from fastapi import APIRouter, Depends
 
 from app.db.session import DbSession
 from app.models.products import ProductCreate, ProductResponse, VariantCreate, VariantResponse
+from app.models.products import ProductLineupResponse
 from app.security.dependencies import CurrentAdmin, CurrentPrincipal
 from app.services.products_service import ProductsService
 
 router = APIRouter(prefix="/api/v1/products", tags=["products"])
+lineups_router = APIRouter(prefix="/api/v1/product-lineups", tags=["product-lineups"])
 
 
 async def get_products_service() -> ProductsService:
@@ -24,6 +26,10 @@ async def list_products(
     service: ServiceDependency,
 ) -> list[ProductResponse]:
     return await service.list(session)
+
+@lineups_router.get("", response_model=list[ProductLineupResponse])
+async def list_lineups(session: DbSession, _: CurrentPrincipal, service: ServiceDependency) -> list[ProductLineupResponse]:
+    return await service.list_lineups(session)
 
 
 @router.post("", response_model=ProductResponse, status_code=201)

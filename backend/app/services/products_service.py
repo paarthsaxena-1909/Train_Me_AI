@@ -1,10 +1,13 @@
+from __future__ import annotations
+
 from pydantic import ConfigDict, validate_call
-from typing import Any
+from typing import Any, List
 
 from app.errors import NotFoundError
 from app.logger import AppLogger
 from app.models.products import (
     ProductContextResponse,
+    ProductLineupResponse,
     ProductCreate,
     ProductResponse,
     VariantCreate,
@@ -33,6 +36,10 @@ class ProductsService:
                 )
             )
         return [ProductResponse.model_validate(product) for product in products]
+
+    @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
+    async def list_lineups(self, session: Any) -> List[ProductLineupResponse]:
+        return [ProductLineupResponse.model_validate(row) for row in await self.repository.list_lineups(session)]
 
     @validate_call(config=ConfigDict(arbitrary_types_allowed=True), validate_return=True)
     async def get_context(self, session: Any, product_id: int) -> ProductContextResponse:

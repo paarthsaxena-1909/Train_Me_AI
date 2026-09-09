@@ -1,5 +1,10 @@
 from pydantic import BaseModel, Field
 
+class ProductLineupResponse(BaseModel):
+    id: int
+    lineup_identifier: str
+    product_count: int = 0
+
 class VariantCreate(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     specs: str = Field(min_length=1)

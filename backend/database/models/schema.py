@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database.models.base import Base
@@ -49,20 +49,23 @@ class BlobItem(AuditFields, Base):
 class Assignment(AuditFields, Base):
     __tablename__ = "assignments"
 
-    status: Mapped[str] = mapped_column(String(50), nullable=False)
+    status: Mapped[str | None] = mapped_column(String(50), nullable=True, index=True)
     deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    product_lineup_id: Mapped[int] = mapped_column(ForeignKey("product_lineups._id", ondelete="CASCADE"), nullable=False, index=True)
 
 
 class AssignmentQuestion(AuditFields, Base):
     __tablename__ = "assignment_questions"
 
     question_number: Mapped[int] = mapped_column(Integer, nullable=False)
-    answer: Mapped[str] = mapped_column(Text, nullable=False)
-    evaluation: Mapped[str] = mapped_column(Text, nullable=False)
-    product_id: Mapped[int] = mapped_column(ForeignKey("products._id", ondelete="CASCADE"), nullable=False, index=True)
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    evaluation: Mapped[str | None] = mapped_column(Text, nullable=True)
     assignment_id: Mapped[int] = mapped_column(
         ForeignKey("assignments._id", ondelete="CASCADE"), nullable=False, index=True
     )
+
+    __table_args__ = (UniqueConstraint("assignment_id", "question_number", name="uq_assignment_questions_number"),)
 
 
 class AssignmentAgentMapping(AuditFields, Base):
@@ -72,6 +75,8 @@ class AssignmentAgentMapping(AuditFields, Base):
     assignment_id: Mapped[int] = mapped_column(
         ForeignKey("assignments._id", ondelete="CASCADE"), nullable=False, index=True
     )
+
+    __table_args__ = (UniqueConstraint("agent_id", "assignment_id", name="uq_assignment_agent_mapping_pair"),)
 
 
 class AgentQuery(AuditFields, Base):

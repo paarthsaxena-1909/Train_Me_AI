@@ -12,6 +12,9 @@ class ProductsRepository(BaseRepository):
     async def list_products(self, session):
         return (await self.execute_query(session, "products", "list_products")).mappings().all()
 
+    async def list_lineups(self, session):
+        return (await self.execute_query(session, "products", "list_lineups")).mappings().all()
+
     async def create_variant(self, session, product_id, name, specs):
         lineup = await self.execute_query(session, "products", "product_lineup_id", {"product_id": product_id})
         lineup_id = lineup.mappings().one()["product_lineup_id"]

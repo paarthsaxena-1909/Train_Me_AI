@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 import { ProductsPage } from '../features/products/ProductsPage'
 import { QAPage } from '../features/qa/QAPage'
+import { AssignmentsPage } from '../features/assignments/AssignmentsPage'
 
 function homeDestination() { return readAuthToken() ? 'agent' : 'agent/login' }
 
@@ -19,7 +20,7 @@ function Placeholder({ title }: { title: string }) {
 function Workspace({ role }: { role: Role }) {
   const { pathname } = useLocation()
   const section = pathname.split('/')[2]
-  const page = section === 'products' ? <ProductsPage canCreate={role === 'admin'} /> : section === 'qa' && role === 'agent' ? <QAPage /> : section ? <Placeholder title={section[0].toUpperCase() + section.slice(1)} /> : <OverviewPage role={role} />
+  const page = section === 'products' ? <ProductsPage canCreate={role === 'admin'} /> : section === 'qa' && role === 'agent' ? <QAPage /> : section === 'assignments' && role === 'agent' ? <AssignmentsPage /> : section ? <Placeholder title={section[0].toUpperCase() + section.slice(1)} /> : <OverviewPage role={role} />
   return <ProtectedRoute role={role}>{page}</ProtectedRoute>
 }
 
