@@ -1,3 +1,4 @@
 1. Need to Build the AI Layer for Q/A in backend - ideally with polling mechanism for learning purposes and also building it properly
 2. Face Analysis - Depends on the Blob Storage I will be getting and hence lets wait and confirm first what can be used in there 
 3. Assignment AI - Replace the mocked ten-question generation and per-question evaluation with a real AI generation/evaluation system, including durable retries, restart recovery, persisted generation state, and proper evaluation handling. The current assignment generation is product-first; later, assignments should also be generated using the agent's Live Mock Drill performance and context.
+4. evaluation - Need to properly generate the questions - Need to think in Roleplay terms, able to evaluate the session after Completion
