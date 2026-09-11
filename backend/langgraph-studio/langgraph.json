@@ -1,0 +1,7 @@
+{
+  "dependencies": [".."],
+  "graphs": {
+    "evaluation": "../app/services/evaluations/evaluation_graph.py:evaluation_graph"
+  },
+  "env": "../app/.env"
+}
