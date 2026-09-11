@@ -90,8 +90,10 @@ def test_compose_declares_healthcheck_database_urls_and_upload_volume() -> None:
     backend_block = compose.split("\n  backend:\n", 1)[1].split("\n  frontend:\n", 1)[0]
     migration_block = compose.split("\n  database-migration:\n", 1)[1].split("\n  backend:\n", 1)[0]
     assert "/api/v1/health" in backend_block
-    assert "DATABASE_URL:" in backend_block
-    assert "DATABASE_URL:" in migration_block
+    assert "env_file:" in backend_block
+    assert "./backend/app/.env" in backend_block
+    assert "env_file:" in migration_block
+    assert "./backend/database/.env" in migration_block
     assert "uploads_data:/data/uploads" in backend_block
 
 

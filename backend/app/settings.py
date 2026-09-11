@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     max_upload_bytes: int = 10 * 1024 * 1024
     app_timezone: str = "Asia/Kolkata"
     log_level: LogLevel = "INFO"
+    heygen_api_key: str = ""
+    heygen_api_url: str = "https://api.liveavatar.com"
+    heygen_avatar_id: str = ""
+    heygen_avatar_name: str = ""
+    heygen_is_sandbox: bool = False
 
     model_config = SettingsConfigDict(extra="ignore")
 
@@ -44,6 +49,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_jwt_secret(self) -> "Settings":
+        if not self.heygen_avatar_id:
+            self.heygen_avatar_id = self.heygen_avatar_name
         environment = self.environment.strip().lower()
         if environment not in DEVELOPMENT_ENVIRONMENTS and (
             self.jwt_secret == DEFAULT_JWT_SECRET or len(self.jwt_secret) < MIN_JWT_SECRET_LENGTH

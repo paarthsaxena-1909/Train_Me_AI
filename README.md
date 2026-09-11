@@ -38,6 +38,28 @@ The frontend is available at <http://localhost:5173> and the API at
 <http://localhost:8000>. Stop the stack with `docker compose down`; add `-v`
 only when you intentionally want to remove the local PostgreSQL volume.
 
+## Evaluations avatar prototype
+
+Agents can open `/agent/evaluations` to try the stateless voice-to-avatar
+prototype. The browser captures speech with the Web Speech API (or accepts
+typed input), the backend chooses one of ten fixed practice responses through
+a small LangGraph, and the HeyGen LiveAvatar session speaks that response.
+No evaluation data is stored in the database.
+
+Configure these backend environment variables before starting an avatar
+session:
+
+- `HEYGEN_API_KEY` — HeyGen credential; server-side only.
+- `HEYGEN_AVATAR_ID` — the LiveAvatar avatar to start.
+- `HEYGEN_AVATAR_NAME` — accepted for compatibility with the existing app env
+  file; its value must still be the HeyGen avatar ID, not a display name.
+- `HEYGEN_API_URL` — optional; defaults to `https://api.liveavatar.com`.
+- `HEYGEN_IS_SANDBOX` — optional boolean, defaults to `false`.
+
+The browser receives only the temporary LiveAvatar session token, never the
+API key. Use a current Chromium-based browser for the most reliable speech
+recognition support and allow microphone access when prompted.
+
 ## Backend conventions
 
 The current runtime SQL dialect is PostgreSQL. Queries live under

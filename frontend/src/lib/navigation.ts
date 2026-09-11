@@ -10,5 +10,6 @@ export const navigationByRole: Record<Role, NavItem[]> = {
     { label: 'Products', to: '/agent/products', icon: 'book' },
     { label: 'Q&A', to: '/agent/qa', icon: 'chat' },
     { label: 'Assignments', to: '/agent/assignments', icon: 'clipboard' },
+    { label: 'Evaluations', to: '/agent/evaluations', icon: 'chat' },
   ],
 }

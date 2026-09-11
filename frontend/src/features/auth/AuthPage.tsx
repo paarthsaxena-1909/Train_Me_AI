@@ -24,7 +24,8 @@ export function AuthPage({ role, mode = 'login' }: AuthPageProps) {
   const roleName = role === 'admin' ? 'administrator' : 'agent'
 
   useEffect(() => {
-    setNotice((location.state as { registered?: boolean } | null)?.registered ? 'Account created. Sign in to continue.' : null)
+    const state = location.state as { registered?: boolean; authNotice?: string } | null
+    setNotice(state?.registered ? 'Account created. Sign in to continue.' : state?.authNotice ?? null)
   }, [location.state])
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {

@@ -72,6 +72,20 @@ describe('application shell routing', () => {
     expect(screen.getByRole('heading', { name: /your agent workspace/i })).toBeInTheDocument()
     expect(screen.queryByText('+18%')).not.toBeInTheDocument()
   })
+
+  test('redirects an authenticated user to login with a notice after a protected request returns 401', async () => {
+    const user = userEvent.setup()
+    store.dispatch(setSession({ token: 'expired-token', account: { id: 2, email: 'agent@timesinternet.in', name: 'Agent', role: 'agent' } }))
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ detail: 'Invalid or expired access token' }), { status: 401 })))
+    renderAt('/agent/evaluations')
+
+    await user.click(await screen.findByRole('button', { name: /start avatar/i }))
+
+    expect(await screen.findByRole('heading', { name: /welcome back/i })).toBeInTheDocument()
+    expect(screen.getByText(/your session expired/i)).toBeInTheDocument()
+    expect(screen.getByTestId('route-location')).toHaveTextContent('/agent/login')
+    expect(sessionStorage.getItem('train-me-auth-token-v1')).toBeNull()
+  })
 })
 
 describe('apiRequest', () => {
@@ -167,6 +181,17 @@ describe('apiRequest', () => {
       message: 'Title is required',
       code: 'validation_error',
     })
+  })
+
+  test('emits an auth-expired event only for 401 responses carrying a bearer token', async () => {
+    const handler = vi.fn()
+    window.addEventListener('train-me-auth-expired', handler)
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify({ detail: 'Expired' }), { status: 401 }))))
+    await expect(apiRequest('/api/protected', { token: 'expired-token' })).rejects.toMatchObject({ status: 401 })
+    sessionStorage.clear()
+    await expect(apiRequest('/api/login', { method: 'POST', body: {} })).rejects.toMatchObject({ status: 401 })
+    expect(handler).toHaveBeenCalledTimes(1)
+    window.removeEventListener('train-me-auth-expired', handler)
   })
 
   test('turns validation detail arrays into actionable messages without leaking locations', async () => {

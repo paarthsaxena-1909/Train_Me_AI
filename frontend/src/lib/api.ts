@@ -12,6 +12,8 @@ export class ApiError extends Error {
   }
 }
 
+export const authExpiredEvent = 'train-me-auth-expired'
+
 export type ApiRequestOptions = Omit<RequestInit, 'body'> & {
   body?: BodyInit | Record<string, unknown> | unknown[]
   token?: string
@@ -66,6 +68,9 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   const text = await response.text()
   const payload = parsePayload(text)
   if (!response.ok) {
+    if (response.status === 401 && bearer && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(authExpiredEvent, { detail: { message: 'Your session expired. Please sign in again.' } }))
+    }
     const record = payload && typeof payload === 'object' ? payload as Record<string, unknown> : undefined
     const detailItems = Array.isArray(record?.detail) ? record.detail : []
     const detailMessage = detailItems
